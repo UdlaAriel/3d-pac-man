@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +14,12 @@ public class PlayerController : MonoBehaviour
     private Vector3 currentDirection = Vector3.zero;
     private bool isBlocked = false;
 
+    [SerializeField] private int lives = 3;
+
+    private Vector3 originalPosition;
+    public TextMeshProUGUI LifesText;
+    public TextMeshProUGUI PelletsText;
+
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
@@ -21,6 +28,10 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        originalPosition = transform.position;
+
+        LifesText.SetText($"{lives}");
+        PelletsText.SetText($"{pelletQuantity}");
     }
 
     void Update()
@@ -36,28 +47,28 @@ public class PlayerController : MonoBehaviour
             currentDirection = new Vector3(inputDirection.x, 0f, inputDirection.y).normalized;
 
             // Solo cambiamos de dirección si no estamos bloqueados
-            if (!isBlocked)
-            {
-                // Permitimos cambio inmediato si no hay muro
-                TryMove(currentDirection);
-            }
+            //if (!isBlocked)
+            //{
+            //    // Permitimos cambio inmediato si no hay muro
+            //    TryMove(currentDirection);
+            //}
         }
     }
 
     void FixedUpdate()
     {
-        if (!isBlocked && currentDirection != Vector3.zero)
+        if (/*!isBlocked && */currentDirection != Vector3.zero)
         {
             Vector3 newPosition = rb.position + currentDirection * speed * Time.fixedDeltaTime;
             rb.MovePosition(newPosition);
         }
     }
 
-    void TryMove(Vector3 direction)
-    {
-        // Se puede agregar lógica extra si se desea bloquear movimiento hasta que se valide el giro
-        isBlocked = false;
-    }
+    //void TryMove(Vector3 direction)
+    //{
+    //    // Se puede agregar lógica extra si se desea bloquear movimiento hasta que se valide el giro
+    //    isBlocked = false;
+    //}
 
     void OnCollisionEnter(Collision collision)
     {
@@ -65,6 +76,13 @@ public class PlayerController : MonoBehaviour
         {
             isBlocked = true;
             currentDirection = Vector3.zero;
+        }
+        else if (collision.gameObject.CompareTag("Enemy"))
+        {
+            lives--;
+            LifesText.SetText($"{lives}");
+
+            transform.position = originalPosition;
         }
     }
 
@@ -80,6 +98,7 @@ public class PlayerController : MonoBehaviour
                 currentDirection = new Vector3(inputDirection.x, 0f, inputDirection.y).normalized;
             }
         }
+        
     }
 
     void OnTriggerEnter(Collider other)
@@ -88,6 +107,8 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(other.gameObject);
             pelletQuantity++;
+
+            PelletsText.SetText($"{pelletQuantity}");
         }
     }
 }

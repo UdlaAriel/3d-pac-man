@@ -14,11 +14,14 @@ public class EnemyMovement : MonoBehaviour
     private enum State { Roaming, Chasing }
     private State currentState = State.Roaming;
 
+    private Vector3 originalPosition;
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         PickRandomDirection();
         timer = changeDirectionTime;
+        originalPosition = transform.position;
     }
 
     void Update()
@@ -59,6 +62,7 @@ public class EnemyMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             Debug.Log("El enemigo tocó al jugador. Aquí perdería una vida.");
+            transform.position = originalPosition;
         }
         else
         {
