@@ -16,7 +16,7 @@ public class EnemyMovement : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("TestPlayer").transform;
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         PickRandomDirection();
         timer = changeDirectionTime;
     }
@@ -56,7 +56,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("TestPlayer"))
+        if (collision.gameObject.CompareTag("Player"))
         {
             Debug.Log("El enemigo tocó al jugador. Aquí perdería una vida.");
         }
